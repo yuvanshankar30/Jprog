@@ -1067,7 +1067,21 @@ public class Screen extends JPanel
                         break;
                     }
 
-                    File outputFile = new File(outputFolder, fileName + emitPanel.detectedExtension);
+                    // Real, confirmed gap: the output filename never
+                    // depended on which suffix button was pressed - only on
+                    // the "gCode emission name" field above, which defaults
+                    // to (and is easy to leave as) the same value for every
+                    // suffix. A cut with more than one real suffix (e.g.
+                    // "cut" and "holes") silently overwrote one emission
+                    // with the next unless the operator remembered to retype
+                    // a different name each time. When there's genuinely
+                    // only one suffix to choose from, the filename is
+                    // unchanged from before - nothing to disambiguate.
+                    File outputFile = new File(
+                            outputFolder,
+                            fileName
+                                    + (suffixes.length > 1 ? "_" + button.getText() : "")
+                                    + emitPanel.detectedExtension);
 
                     for (Part part : selectedSheet.getActiveCut()) {
                         // This loads the correct NGCDocument for the part
