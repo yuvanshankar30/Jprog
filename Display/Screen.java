@@ -1096,6 +1096,18 @@ public class Screen extends JPanel
 
                         selectedSheet.emitGCode(
                                 outputFile, button.getText(), origin, finalOrder);
+                        // Direct confirmation that emission actually
+                        // happened and exactly where it landed - a real,
+                        // confirmed point of confusion previously (pressing
+                        // an emit button gave no visible sign anything had
+                        // occurred, and the output file's name/location
+                        // depends on the "gCode emission name" field above,
+                        // not the button just clicked).
+                        JOptionPane.showMessageDialog(
+                                Screen.this,
+                                "Wrote " + button.getText() + " G-code to:\n" + outputFile.getAbsolutePath(),
+                                "G-code Written",
+                                JOptionPane.INFORMATION_MESSAGE);
                     }
                 }
             }
@@ -1448,6 +1460,11 @@ public class Screen extends JPanel
 
             // Row 2: Add Hole | Add Item | Del Select
             addHole = new JButton("Add Hole");
+            // The click that actually places a hole only registers while the
+            // A key is held (mousePressed: menuState == ADD_HOLE && aHeld) -
+            // otherwise this button visibly turns on with nothing else
+            // appearing to happen, a real, confirmed point of confusion.
+            addHole.setToolTipText("Click this to arm hole placement, then hold A and click on the sheet to place a hole.");
             c.gridx = 0;
             c.gridy = 2;
             c.gridwidth = 1;
@@ -1455,6 +1472,9 @@ public class Screen extends JPanel
             addHole.addActionListener(Screen.this);
 
             addItem = new JButton("Add Item");
+            // Same hold-A-and-click gesture as Add Hole (mousePressed:
+            // menuState == ADD_ITEM && aHeld).
+            addItem.setToolTipText("Select a part in the library, then hold A and click on the sheet to place it.");
             c.gridx = 1;
             c.gridy = 2;
             add(addItem, c);
